@@ -1,6 +1,29 @@
 function data = readSVCsig( filename )
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%READSVCSIG reads an SVC sig file
+%
+% INPUTS:
+%   filename: the file (including path in needed)
+%
+% OUTPUTS:
+%   data: a structure containing the information in the sig file
+%   data.commonHeader: The parts of the header corresponding to the entire
+%       file
+%   data.referenceHeader: The parts of the header corresponding to the
+%       white reference spectrum
+%   data.targetHeader: The parts of the header corresponding to the target
+%       spectrum
+%   data.wavelength: The wavelength values for the spectra
+%   data.reference: The radiance spectrum of the white reference
+%   data.target: The radiance spectrum of the target
+%   data.reflectance: The reflectance spectrum of the target
+%
+% HISTORY:
+%   2013-07-24: Written by Paul Romanczyk (RIT)
+%
+% REFERENCES:
+%   "SVC HR-1024i / SVC HR-768i User Manual" v1.6
+%
+%
 
 % attempt to open the file
 fid = fopen( filename, 'r' );
