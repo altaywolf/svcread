@@ -68,14 +68,39 @@ private:
   unsigned int _memorySlot;
 protected:
   svcsigspectraheader& updateIntegration( float integration[ 3 ] );
+  svcsigspectraheader& updateIntegrationSi( const float &integrationSi );
+  svcsigspectraheader& updateIntegrationInGaAs1( const float &integrationInGaAs1 );
+  svcsigspectraheader& updateIntegrationInGaAs2( const float &integrationInGaAs2 );
   svcsigspectraheader& updateScanMethod( const std::string &scanMethod );
   svcsigspectraheader& updateScanCoadds( float scanCoadds[ 3 ] );
+  svcsigspectraheader& updateScanCoaddsSi( const float &scanCoaddsSi );
+  svcsigspectraheader& updateScanCoaddsInGaAs1( const float &scanCoaddsInGaAs1 );
+  svcsigspectraheader& updateScanCoaddsInGaAs2( const float &scanCoaddsInGaAs2 );
   svcsigspectraheader& updateScanTime( const float &scanTime );
   svcsigspectraheader& updateScanSettings( const std::string &scanSettings );
   svcsigspectraheader& updateExternalDataSet1( short externalDataSet1[ 8 ] );
+  svcsigspectraheader& updateExternalDataSet1X1( const short &externalDataSet1X1 );
+  svcsigspectraheader& updateExternalDataSet1X2( const short &externalDataSet1X2 );
+  svcsigspectraheader& updateExternalDataSet1X3( const short &externalDataSet1X3 );
+  svcsigspectraheader& updateExternalDataSet1X4( const short &externalDataSet1X4 );
+  svcsigspectraheader& updateExternalDataSet1X5( const short &externalDataSet1X5 );
+  svcsigspectraheader& updateExternalDataSet1X6( const short &externalDataSet1X6 );
+  svcsigspectraheader& updateExternalDataSet1X7( const short &externalDataSet1X7 );
+  svcsigspectraheader& updateExternalDataSet1X8( const short &externalDataSet1X8 );
   svcsigspectraheader& updateExternalDataSet2( short externalDataSet2[ 8 ] );
+  svcsigspectraheader& updateExternalDataSet2X1( const short &externalDataSet2X1 );
+  svcsigspectraheader& updateExternalDataSet2X2( const short &externalDataSet2X2 );
+  svcsigspectraheader& updateExternalDataSet2X3( const short &externalDataSet2X3 );
+  svcsigspectraheader& updateExternalDataSet2X4( const short &externalDataSet2X4 );
+  svcsigspectraheader& updateExternalDataSet2X5( const short &externalDataSet2X5 );
+  svcsigspectraheader& updateExternalDataSet2X6( const short &externalDataSet2X6 );
+  svcsigspectraheader& updateExternalDataSet2X7( const short &externalDataSet2X7 );
+  svcsigspectraheader& updateExternalDataSet2X8( const short &externalDataSet2X8 );
   svcsigspectraheader& updateOptic( const std::string &optic );
   svcsigspectraheader& updateTemp( float temp[ 3 ] );
+  svcsigspectraheader& updateTempSi( const float &tempSi );
+  svcsigspectraheader& updateTempInGaAs1( const float &tempInGaAs1 );
+  svcsigspectraheader& updateTempInGaAs2( const float &tempInGaAs2 );
   svcsigspectraheader& updateBattery( const float &battery );
   svcsigspectraheader& updateError( const unsigned int &error );
   svcsigspectraheader& updateUnits( const std::string &units );
@@ -129,23 +154,53 @@ public:
   
   void display() const;
   
-  float* integration() const;
+  float * integration() const;
+  float integrationSi() const;
+  float integrationInGaAs1() const;
+  float integrationInGaAs2() const;
   std::string scanMethod() const;
-  float* scanCoadds() const;
+  float * scanCoadds() const;
+  float scanCoaddsSi() const;
+  float scanCoaddsInGaAs1() const;
+  float scanCoaddsInGaAs2() const;
   float scanTime() const;
   std::string scanSettings() const;
-  short* externalDataSet1() const;
-  short* externalDataSet2() const;
+  short * externalDataSet1() const;
+  short externalDataSet1X1() const;
+  short externalDataSet1X2() const;
+  short externalDataSet1X3() const;
+  short externalDataSet1X4() const;
+  short externalDataSet1X5() const;
+  short externalDataSet1X6() const;
+  short externalDataSet1X7() const;
+  short externalDataSet1X8() const;
+  short * externalDataSet2() const;
+  short externalDataSet2X1() const;
+  short externalDataSet2X2() const;
+  short externalDataSet2X3() const;
+  short externalDataSet2X4() const;
+  short externalDataSet2X5() const;
+  short externalDataSet2X6() const;
+  short externalDataSet2X7() const;
+  short externalDataSet2X8() const;
   std::string optic() const;
-  float* temp() const;
+  float * temp() const;
+  float tempSi() const;
+  float tempInGaAs1() const;
+  float tempInGaAs2() const;
   float battery() const;
   unsigned int error() const;
   std::string units() const;
   std::string time() const;
   std::string longitude() const;
+  float decimalLongitude() const;
   std::string latitude() const;
+  float decimalLatitude() const;
   float gpstime() const;
   unsigned int memorySlot() const;
+  
+  void svcSigParseLatLon( const std::string &latlon, float &deg, float &minutes, float &seconds ) const;
+  void svcSigParseLatLon( const std::string &latlon, float &deg ) const;
   
   friend class svcsig;
 };
@@ -281,11 +336,26 @@ void svcsigspectraheader::display( const std::string &type ) const
 
 float* svcsigspectraheader::integration() const
 {
-  float * tmp = new float[3];
+  float * tmp = new float[ 3 ];
   for ( int i = 0; i < 3; i++ ) {
     tmp[ i ] = _integration[ i ];
   }
   return tmp;
+}
+
+float svcsigspectraheader::integrationSi() const
+{
+  return _integration[ 0 ];
+}
+
+float svcsigspectraheader::integrationInGaAs1() const
+{
+  return _integration[ 1 ];
+}
+
+float svcsigspectraheader::integrationInGaAs2() const
+{
+  return _integration[ 2 ];
 }
 
 std::string svcsigspectraheader::scanMethod() const
@@ -295,11 +365,26 @@ std::string svcsigspectraheader::scanMethod() const
 
 float* svcsigspectraheader::scanCoadds() const
 {
-  float * tmp = new float[3];
+  float * tmp = new float[ 3 ];
   for ( int i = 0; i < 3; i++ ) {
     tmp[ i ] = _scanCoadds[ i ];
   }
   return tmp;
+}
+
+float svcsigspectraheader::scanCoaddsSi() const
+{
+  return _scanCoadds[ 0 ];
+}
+
+float svcsigspectraheader::scanCoaddsInGaAs1() const
+{
+  return _scanCoadds[ 1 ];
+}
+
+float svcsigspectraheader::scanCoaddsInGaAs2() const
+{
+  return _scanCoadds[ 2 ];
 }
 
 float svcsigspectraheader::scanTime() const
@@ -314,20 +399,100 @@ std::string svcsigspectraheader::scanSettings() const
 
 short * svcsigspectraheader::externalDataSet1() const
 {
-  short * tmp = new short[8];
+  short * tmp = new short[ 8 ];
+  for ( int i = 0; i < 8; i++ ) {
+    tmp[ i ] = _externalDataSet1[ i ];
+  }
+  return tmp;
+}
+
+short svcsigspectraheader::externalDataSet1X1() const
+{
+  return _externalDataSet1[ 0 ];
+}
+
+short svcsigspectraheader::externalDataSet1X2() const
+{
+  return _externalDataSet1[ 1 ];
+}
+
+short svcsigspectraheader::externalDataSet1X3() const
+{
+  return _externalDataSet1[ 2 ];
+}
+
+short svcsigspectraheader::externalDataSet1X4() const
+{
+  return _externalDataSet1[ 3 ];
+}
+
+short svcsigspectraheader::externalDataSet1X5() const
+{
+  return _externalDataSet1[ 4 ];
+}
+
+short svcsigspectraheader::externalDataSet1X6() const
+{
+  return _externalDataSet1[ 5 ];
+}
+
+short svcsigspectraheader::externalDataSet1X7() const
+{
+  return _externalDataSet1[ 6 ];
+}
+
+short svcsigspectraheader::externalDataSet1X8() const
+{
+  return _externalDataSet1[ 7 ];
+}
+
+short * svcsigspectraheader::externalDataSet2() const
+{
+  short * tmp = new short[ 8 ];
   for ( int i = 0; i < 8; i++ ) {
     tmp[ i ] = _externalDataSet2[ i ];
   }
   return tmp;
 }
 
-short * svcsigspectraheader::externalDataSet2() const
+short svcsigspectraheader::externalDataSet2X1() const
 {
-  short * tmp = new short[8];
-  for ( int i = 0; i < 8; i++ ) {
-    tmp[ i ] = _externalDataSet2[ i ];
-  }
-  return tmp;
+  return _externalDataSet2[ 0 ];
+}
+
+short svcsigspectraheader::externalDataSet2X2() const
+{
+  return _externalDataSet2[ 1 ];
+}
+
+short svcsigspectraheader::externalDataSet2X3() const
+{
+  return _externalDataSet2[ 2 ];
+}
+
+short svcsigspectraheader::externalDataSet2X4() const
+{
+  return _externalDataSet2[ 3 ];
+}
+
+short svcsigspectraheader::externalDataSet2X5() const
+{
+  return _externalDataSet2[ 4 ];
+}
+
+short svcsigspectraheader::externalDataSet2X6() const
+{
+  return _externalDataSet2[ 5 ];
+}
+
+short svcsigspectraheader::externalDataSet2X7() const
+{
+  return _externalDataSet2[ 6 ];
+}
+
+short svcsigspectraheader::externalDataSet2X8() const
+{
+  return _externalDataSet2[ 7 ];
 }
 
 std::string svcsigspectraheader::optic() const
@@ -342,6 +507,21 @@ float* svcsigspectraheader::temp() const
     tmp[ i ] = _temp[ i ];
   }
   return tmp;
+}
+
+float svcsigspectraheader::tempSi() const
+{
+  return _temp[ 0 ];
+}
+
+float svcsigspectraheader::tempInGaAs1() const
+{
+  return _temp[ 1 ];
+}
+
+float svcsigspectraheader::tempInGaAs2() const
+{
+  return _temp[ 2 ];
 }
 
 float svcsigspectraheader::battery() const
@@ -369,9 +549,41 @@ std::string svcsigspectraheader::longitude() const
   return _longitude;
 }
 
+float svcsigspectraheader::decimalLongitude() const
+{
+  float sign( 0.0 );
+  float num( 0.0 );
+  
+  if ( _longitude.substr( _longitude.size() - 1, 1 ).compare( "E" ) ) {
+    sign = 1.0;
+  }
+  else if ( _longitude.substr( _longitude.size() - 1, 1 ).compare( "W" ) ) {
+    sign = -1.0;
+  }
+  
+  svcSigParseLatLon( _longitude.substr( 0, _longitude.size() - 1 ), num );
+  return sign * num;
+}
+
 std::string svcsigspectraheader::latitude() const
 {
   return _latitude;
+}
+
+float svcsigspectraheader::decimalLatitude() const
+{
+  float sign( 0.0 );
+  float num( 0.0 );
+  
+  if ( _latitude.substr( _latitude.size() - 1, 1 ).compare( "N" ) ) {
+    sign = 1.0;
+  }
+  else if ( _latitude.substr( _latitude.size() - 1, 1 ).compare( "S" ) ) {
+    sign = -1.0;
+  }
+  
+  svcSigParseLatLon( _latitude.substr( 0, _latitude.size() - 1 ), num );
+  return sign * num;
 }
 
 float svcsigspectraheader::gpstime() const
@@ -393,6 +605,24 @@ svcsigspectraheader& svcsigspectraheader::updateIntegration( float integration[ 
   return *this;
 }
 
+svcsigspectraheader& svcsigspectraheader::updateIntegrationSi( const float &integrationSi )
+{
+  _integration[ 0 ] = integrationSi;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateIntegrationInGaAs1( const float &integrationInGaAs1 )
+{
+  _integration[ 1 ] = integrationInGaAs1;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateIntegrationInGaAs2( const float &integrationInGaAs2 )
+{
+  _integration[ 2 ] = integrationInGaAs2;
+  return *this;
+}
+
 svcsigspectraheader& svcsigspectraheader::updateScanMethod( const std::string &scanMethod )
 {
   _scanMethod = scanMethod;
@@ -404,6 +634,24 @@ svcsigspectraheader& svcsigspectraheader::updateScanCoadds( float scanCoadds[ 3 
   for ( int i = 0; i < 3; i++ ) {
     _scanCoadds[ i ] = scanCoadds[ i ];
   }
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateScanCoaddsSi( const float &scanCoaddsSi )
+{
+  _scanCoadds[ 0 ] = scanCoaddsSi;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateScanCoaddsInGaAs1( const float &scanCoaddsInGaAs1 )
+{
+  _scanCoadds[ 1 ] = scanCoaddsInGaAs1;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateScanCoaddsInGaAs2( const float &scanCoaddsInGaAs2 )
+{
+  _scanCoadds[ 2 ] = scanCoaddsInGaAs2;
   return *this;
 }
 
@@ -427,11 +675,107 @@ svcsigspectraheader& svcsigspectraheader::updateExternalDataSet1( short external
   return *this;
 }
 
+svcsigspectraheader& svcsigspectraheader::updateExternalDataSet1X1( const short &externalDataSet1X1 )
+{
+  _externalDataSet1[ 0 ] = externalDataSet1X1;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateExternalDataSet1X2( const short &externalDataSet1X2 )
+{
+  _externalDataSet1[ 1 ] = externalDataSet1X2;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateExternalDataSet1X3( const short &externalDataSet1X3 )
+{
+  _externalDataSet1[ 2 ] = externalDataSet1X3;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateExternalDataSet1X4( const short &externalDataSet1X4 )
+{
+  _externalDataSet1[ 3 ] = externalDataSet1X4;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateExternalDataSet1X5( const short &externalDataSet1X5 )
+{
+  _externalDataSet1[ 4 ] = externalDataSet1X5;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateExternalDataSet1X6( const short &externalDataSet1X6 )
+{
+  _externalDataSet1[ 5 ] = externalDataSet1X6;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateExternalDataSet1X7( const short &externalDataSet1X7 )
+{
+  _externalDataSet1[ 6 ] = externalDataSet1X7;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateExternalDataSet1X8( const short &externalDataSet1X8 )
+{
+  _externalDataSet1[ 7 ] = externalDataSet1X8;
+  return *this;
+}
+
 svcsigspectraheader& svcsigspectraheader::updateExternalDataSet2( short externalDataSet2[ 8 ] )
 {
   for ( int i = 0; i < 8; i++ ) {
     _externalDataSet2[ i ] = externalDataSet2[ i ];
   }
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateExternalDataSet2X1( const short &externalDataSet2X1 )
+{
+  _externalDataSet2[ 0 ] = externalDataSet2X1;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateExternalDataSet2X2( const short &externalDataSet2X2 )
+{
+  _externalDataSet2[ 1 ] = externalDataSet2X2;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateExternalDataSet2X3( const short &externalDataSet2X3 )
+{
+  _externalDataSet2[ 2 ] = externalDataSet2X3;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateExternalDataSet2X4( const short &externalDataSet2X4 )
+{
+  _externalDataSet2[ 3 ] = externalDataSet2X4;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateExternalDataSet2X5( const short &externalDataSet2X5 )
+{
+  _externalDataSet2[ 4 ] = externalDataSet2X5;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateExternalDataSet2X6( const short &externalDataSet2X6 )
+{
+  _externalDataSet2[ 5 ] = externalDataSet2X6;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateExternalDataSet2X7( const short &externalDataSet2X7 )
+{
+  _externalDataSet2[ 6 ] = externalDataSet2X7;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateExternalDataSet2X8( const short &externalDataSet2X8 )
+{
+  _externalDataSet2[ 7 ] = externalDataSet2X8;
   return *this;
 }
 
@@ -446,6 +790,24 @@ svcsigspectraheader& svcsigspectraheader::updateTemp( float temp[ 3 ] )
   for ( int i = 0; i < 3; i++ ) {
     _temp[ i ] = temp[ i ];
   }
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateTempSi( const float &tempSi )
+{
+  _temp[ 0 ] = tempSi;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateTempInGaAs1( const float &tempInGaAs1 )
+{
+  _temp[ 1 ] = tempInGaAs1;
+  return *this;
+}
+
+svcsigspectraheader& svcsigspectraheader::updateTempInGaAs2( const float &tempInGaAs2 )
+{
+  _temp[ 2 ] = tempInGaAs2;
   return *this;
 }
 
@@ -497,6 +859,22 @@ svcsigspectraheader& svcsigspectraheader::updateMemorySlot( const unsigned int &
   return *this;
 }
 
+// -- -- Helper Functions -- -- //
+void svcsigspectraheader::svcSigParseLatLon( const std::string &latlon, float &deg, float &minutes, float &seconds ) const
+{
+  std::size_t loc( latlon.find( "." ) );
+  deg = atof( latlon.substr( 0, loc - 2 ).c_str() );
+  minutes = atof( latlon.substr( loc - 2, 2 ).c_str() );
+  seconds = atof( latlon.substr( loc + 1, latlon.size() - loc - 1).c_str() );
+}
+
+void svcsigspectraheader::svcSigParseLatLon( const std::string &latlon, float &deg ) const
+{
+  float minutes, seconds;
+  svcSigParseLatLon( latlon, deg, minutes, seconds );
+  minutes += ( seconds / 60.0 );
+  deg += ( minutes / 60.0 );
+}
 
 
 #endif // __svcsigspectraheader_h_

@@ -48,6 +48,7 @@
 
 class svcsigcommonheader {
 private:
+  // private variables
   std::string _name;
   std::string _instrument;
   short _externalDataDark[ 8 ];
@@ -56,12 +57,24 @@ private:
   float _factors[ 3 ];
   std::string _factorsComment;
 protected:
+  // protected member functions. These are intended to be used from sivsig.read( const std::string &filename )
   svcsigcommonheader& updateName( const std::string &name );
   svcsigcommonheader& updateInstrument( const std::string &instrument );
   svcsigcommonheader& updateExternalDataDark( short externalDataDark[ 8 ] );
+  svcsigcommonheader& updateExternalDataDarkD1( const short &externalDataDarkD1 );
+  svcsigcommonheader& updateExternalDataDarkD2( const short &externalDataDarkD2 );
+  svcsigcommonheader& updateExternalDataDarkD3( const short &externalDataDarkD3 );
+  svcsigcommonheader& updateExternalDataDarkD4( const short &externalDataDarkD4 );
+  svcsigcommonheader& updateExternalDataDarkD5( const short &externalDataDarkD5 );
+  svcsigcommonheader& updateExternalDataDarkD6( const short &externalDataDarkD6 );
+  svcsigcommonheader& updateExternalDataDarkD7( const short &externalDataDarkD7 );
+  svcsigcommonheader& updateExternalDataDarkD8( const short &externalDataDarkD8 );
   svcsigcommonheader& updateExternalDataMask( const char &externalDataMask );
   svcsigcommonheader& updateComm( const std::string &comm );
   svcsigcommonheader& updateFactors( float factors[ 3 ] );
+  svcsigcommonheader& updateFactorsSi( const float &factorsSi );
+  svcsigcommonheader& updateFactorsInGaAs1( const float &factorsInGaAs1 );
+  svcsigcommonheader& updateFactorsInGaAs2( const float &factorsInGaAs2 );
   svcsigcommonheader& updateFactorsComment( const std::string &factorsComment );
 public:
   svcsigcommonheader();
@@ -69,13 +82,25 @@ public:
   ~svcsigcommonheader();
   
   void display() const;
+//  void displayExternalDataMaskBits() const;
   
   std::string name() const;
   std::string instrument() const;
   short * externalDataDark() const;
+  short externalDataDarkD1() const;
+  short externalDataDarkD2() const;
+  short externalDataDarkD3() const;
+  short externalDataDarkD4() const;
+  short externalDataDarkD5() const;
+  short externalDataDarkD6() const;
+  short externalDataDarkD7() const;
+  short externalDataDarkD8() const;
   char externalDataMask() const;
   std::string comm() const;
   float * factors() const;
+  float factorsSi() const;
+  float factorsInGaAs1() const;
+  float factorsInGaAs2() const;
   std::string factorsComment() const;
   
   friend class svcsig;
@@ -174,6 +199,47 @@ short * svcsigcommonheader::externalDataDark() const
   return tmp;
 }
 
+short svcsigcommonheader::externalDataDarkD1() const
+{
+  return _externalDataDark[ 0 ];
+}
+
+short svcsigcommonheader::externalDataDarkD2() const
+{
+  return _externalDataDark[ 1 ];
+}
+
+short svcsigcommonheader::externalDataDarkD3() const
+{
+  return _externalDataDark[ 2 ];
+}
+
+short svcsigcommonheader::externalDataDarkD4() const
+{
+  return _externalDataDark[ 3 ];
+}
+
+short svcsigcommonheader::externalDataDarkD5() const
+{
+  return _externalDataDark[ 4 ];
+}
+
+short svcsigcommonheader::externalDataDarkD6() const
+{
+  return _externalDataDark[ 5 ];
+}
+
+short svcsigcommonheader::externalDataDarkD7() const
+{
+  return _externalDataDark[ 6 ];
+}
+
+short svcsigcommonheader::externalDataDarkD8() const
+{
+  return _externalDataDark[ 7 ];
+}
+
+
 char svcsigcommonheader::externalDataMask() const
 {
   return _externalDataMask;
@@ -191,6 +257,21 @@ float * svcsigcommonheader::factors() const
     tmp[ i ] = _factors[ i ];
   }
   return tmp;
+}
+
+float svcsigcommonheader::factorsSi() const
+{
+  return _factors[ 0 ];
+}
+
+float svcsigcommonheader::factorsInGaAs1() const
+{
+  return _factors[ 1 ];
+}
+
+float svcsigcommonheader::factorsInGaAs2() const
+{
+  return _factors[ 2 ];
 }
 
 std::string svcsigcommonheader::factorsComment() const
@@ -220,6 +301,54 @@ svcsigcommonheader& svcsigcommonheader::updateExternalDataDark( short externalDa
   return *this;
 }
 
+svcsigcommonheader& svcsigcommonheader::updateExternalDataDarkD1( const short &externalDataDarkD1 )
+{
+  _externalDataDark[ 0 ] = externalDataDarkD1;
+  return *this;
+}
+
+svcsigcommonheader& svcsigcommonheader::updateExternalDataDarkD2( const short &externalDataDarkD2 )
+{
+  _externalDataDark[ 1 ] = externalDataDarkD2;
+  return *this;
+}
+
+svcsigcommonheader& svcsigcommonheader::updateExternalDataDarkD3( const short &externalDataDarkD3 )
+{
+  _externalDataDark[ 2 ] = externalDataDarkD3;
+  return *this;
+}
+
+svcsigcommonheader& svcsigcommonheader::updateExternalDataDarkD4( const short &externalDataDarkD4 )
+{
+  _externalDataDark[ 3 ] = externalDataDarkD4;
+  return *this;
+}
+
+svcsigcommonheader& svcsigcommonheader::updateExternalDataDarkD5( const short &externalDataDarkD5 )
+{
+  _externalDataDark[ 4 ] = externalDataDarkD5;
+  return *this;
+}
+
+svcsigcommonheader& svcsigcommonheader::updateExternalDataDarkD6( const short &externalDataDarkD6 )
+{
+  _externalDataDark[ 5 ] = externalDataDarkD6;
+  return *this;
+}
+
+svcsigcommonheader& svcsigcommonheader::updateExternalDataDarkD7( const short &externalDataDarkD7 )
+{
+  _externalDataDark[ 6 ] = externalDataDarkD7;
+  return *this;
+}
+
+svcsigcommonheader& svcsigcommonheader::updateExternalDataDarkD8( const short &externalDataDarkD8 )
+{
+  _externalDataDark[ 7 ] = externalDataDarkD8;
+  return *this;
+}
+
 svcsigcommonheader& svcsigcommonheader::updateExternalDataMask( const char &externalDataMask )
 {
   _externalDataMask = externalDataMask;
@@ -237,6 +366,24 @@ svcsigcommonheader& svcsigcommonheader::updateFactors( float factors[ 3 ] )
   for ( int i = 0; i < 3; i++ ) {
     _factors[ i ] = factors[ i ];
   }
+  return *this;
+}
+
+svcsigcommonheader& svcsigcommonheader::updateFactorsSi( const float &factorsSi )
+{
+  _factors[ 0 ] = factorsSi;
+  return *this;
+}
+
+svcsigcommonheader& svcsigcommonheader::updateFactorsInGaAs1( const float &factorsInGaAs1 )
+{
+  _factors[ 1 ] = factorsInGaAs1;
+  return *this;
+}
+
+svcsigcommonheader& svcsigcommonheader::updateFactorsInGaAs2( const float &factorsInGaAs2 )
+{
+  _factors[ 2 ] = factorsInGaAs2;
   return *this;
 }
 
