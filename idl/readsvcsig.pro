@@ -19,6 +19,9 @@ FUNCTION readsvcsig, filename
 ;
 ; HISTORY:
 ;   2013-07-24: Written by Paul Romanczyk (RIT)
+;   2013-08-04: Updated by Paul Romanczyk
+;      + Added a commonHeader.factorsComment field
+;      + Changed commonHeader.factors to be a float array
 ;
 ; REFERENCES:
 ;   "SVC HR-1024i / SVC HR-768i User Manual" v1.6
@@ -58,7 +61,8 @@ commonHeader = { $
   externalDataDark:INTARR(8), $
   externalDataMask: 0, $
   comm: "", $
-  factors: "" }
+  factors: FLTARR(3), $
+  factorsComment: "" }
   
 targetHeader = { $
   integration:FLTARR(3), $
@@ -355,13 +359,33 @@ WHILE readHeader DO BEGIN
           referenceHeader.gpsTime = DOUBLE( STRTRIM( STRMID( extra, loc + 1, STRLEN( extra ) - loc - 1 ), 2 ) )
         END
       "comm": commonHeader.comm = extra
-      "memory slot":$
+      "memory slot": $
         BEGIN
           loc = STRPOS( extra, "," )
           targetHeader.memorySlot = FIX( STRTRIM( STRMID( extra, 0, loc ), 2 ) )
           referenceHeader.memorySlot = FIX( STRTRIM( STRMID( extra, loc + 1, STRLEN( extra ) - loc - 1 ), 2 ) )
         END
-      "factors": commonHeader.factors = extra
+      "factors": $
+        BEGIN
+          ; search for a comment
+          loc = STRPOS( extra, "[" )
+          loc2 = STRPOS( extra, "]" )
+          IF loc GE 0 THEN BEGIN
+            IF loc2 GE loc THEN BEGIN
+              commonHeader.factorsComment = STRTRIM( STRMID( extra, loc + 1, loc2 - loc - 1 ), 2 )
+            ENDIF
+            extra = STRTRIM( STRMID( extra, 0, loc - 1 ), 2 )
+          ENDIF
+          
+          loc = STRPOS( extra, "," )
+          commonHeader.factors[0] = FLOAT( STRTRIM( STRMID( extra, 0, loc ), 2 ) )
+          extra = STRTRIM( STRMID( extra, loc + 1, STRLEN( extra ) - loc - 1 ), 2 )
+          loc = STRPOS( extra, "," )
+          commonHeader.factors[1] = FLOAT( STRTRIM( STRMID( extra, 0, loc ), 2 ) )
+          extra = STRTRIM( STRMID( extra, loc + 1, STRLEN( extra ) - loc - 1 ), 2 )
+          loc = STRPOS( extra, "," )
+          commonHeader.factors[2] = FLOAT( extra )
+        END
       ELSE: $
         BEGIN
           PRINT, line

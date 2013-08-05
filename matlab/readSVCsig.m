@@ -19,6 +19,11 @@ function data = readSVCsig( filename )
 %
 % HISTORY:
 %   2013-07-24: Written by Paul Romanczyk (RIT)
+%   2013-08-04: Updated by Paul Romanczyk
+%       + Changed external data dark to an array from a string (in common
+%       header)
+%       + Added a commonHeader.factorsComment field
+%       + Changed commonHeader.factors to be a float array
 %
 % REFERENCES:
 %   "SVC HR-1024i / SVC HR-768i User Manual" v1.6
@@ -207,7 +212,7 @@ while run
                 str2double( rhs( loc( 4 ) + 1:loc( 5 ) - 1 ) ), ...
                 str2double( rhs( loc( 5 ) + 1:loc( 6 ) - 1 ) ), ...
                 str2double( rhs( loc( 6 ) + 1:loc( 7 ) - 1 ) ), ...
-                str2double( rhs( loc( 7 ) + 1:loc( 8 ) - 1 ) ) ];
+                str2double( rhs( loc( 7 ) + 1:end ) ) ];
             
         case 'external data mask'
             commonHeader.externalDataMask = rhs;
@@ -309,7 +314,25 @@ while run
             targetHeader.memorySlot = str2double( rhs );
             
         case 'factors'
-            commonHeader.factors = rhs;
+            tline = rhs;
+            loc = strfind( tline, '[' );
+            % check if we have a comment
+            if numel( loc ) > 0
+                rhs = strtrim( tline( loc + 1:end ) );
+                tline = strtrim( tline( 1:loc - 1 ) );
+                loc = strfind( rhs, ']' );
+                if numel( loc ) > 0
+                    % we must also have an end
+                    rhs = strtrim( rhs( 1:loc - 1 ) );
+                    commonHeader.factorsComment = rhs;
+                end
+            end
+            loc = strfind( tline, ',' );
+
+            commonHeader.factors = [ ...
+                str2double( tline( 1:loc( 1 ) - 1 ) ), ...
+                str2double( tline( loc( 1 ) + 1:loc( 2 ) - 1 ) ), ...
+                str2double( tline( loc( 2 ) + 1:end ) ) ];           
             
         otherwise 
             fprintf( 'Unknown Header Field: "%s"\n', lhs );
