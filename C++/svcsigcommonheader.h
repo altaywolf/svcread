@@ -49,8 +49,10 @@
 class svcsigcommonheader {
 private:
   // private variables
-  std::string _name;
-  std::string _instrument;
+  std::string _name; // sig file name
+  std::string _instrumentModelNumber;
+  std::string _instrumentExtendedSerialNumber;
+  std::string _instrumentCommonName;
   short _externalDataDark[ 8 ];
   char _externalDataMask;
   std::string _comm;
@@ -59,7 +61,9 @@ private:
 protected:
   // protected member functions. These are intended to be used from sivsig.read( const std::string &filename )
   svcsigcommonheader& updateName( const std::string &name );
-  svcsigcommonheader& updateInstrument( const std::string &instrument );
+  svcsigcommonheader& updateInstrumentModelNumber( const std::string &instrumentModelNumber );
+  svcsigcommonheader& updateInstrumentExtendedSerialNumber( const std::string &instrumentExtendedSerialNumber );
+  svcsigcommonheader& updateInstrumentCommonName( const std::string &instrumentCommonName );
   svcsigcommonheader& updateExternalDataDark( short externalDataDark[ 8 ] );
   svcsigcommonheader& updateExternalDataDarkD1( const short &externalDataDarkD1 );
   svcsigcommonheader& updateExternalDataDarkD2( const short &externalDataDarkD2 );
@@ -72,9 +76,9 @@ protected:
   svcsigcommonheader& updateExternalDataMask( const char &externalDataMask );
   svcsigcommonheader& updateComm( const std::string &comm );
   svcsigcommonheader& updateFactors( float factors[ 3 ] );
-  svcsigcommonheader& updateFactorsSi( const float &factorsSi );
-  svcsigcommonheader& updateFactorsInGaAs1( const float &factorsInGaAs1 );
-  svcsigcommonheader& updateFactorsInGaAs2( const float &factorsInGaAs2 );
+  svcsigcommonheader& updateFactorsReference( const float &factorsReference );
+  svcsigcommonheader& updateFactorsTarget( const float &factorsTarget );
+  svcsigcommonheader& updateFactorsReflectance( const float &factorsReflectance );
   svcsigcommonheader& updateFactorsComment( const std::string &factorsComment );
 public:
   svcsigcommonheader();
@@ -86,6 +90,9 @@ public:
   
   std::string name() const;
   std::string instrument() const;
+  std::string instrumentModelNumber() const;
+  std::string instrumentExtendedSerialNumber() const;
+  std::string instrumentCommonName() const;
   short * externalDataDark() const;
   short externalDataDarkD1() const;
   short externalDataDarkD2() const;
@@ -98,9 +105,9 @@ public:
   char externalDataMask() const;
   std::string comm() const;
   float * factors() const;
-  float factorsSi() const;
-  float factorsInGaAs1() const;
-  float factorsInGaAs2() const;
+  float factorsReference() const;
+  float factorsTarget() const;
+  float factorsReflectance() const;
   std::string factorsComment() const;
   
   friend class svcsig;
@@ -115,7 +122,9 @@ svcsigcommonheader::svcsigcommonheader()
 {
   int i;
   _name = "";
-  _instrument = "";
+  _instrumentModelNumber = "";
+  _instrumentExtendedSerialNumber = "";
+  _instrumentCommonName = "";
   for ( i = 0; i < 8; i++ ) {
     _externalDataDark[ i ] = 0;
   }
@@ -131,7 +140,9 @@ svcsigcommonheader::svcsigcommonheader( const svcsigcommonheader &other )
 {
   int i;
   _name = other._name;
-  _instrument = other._instrument;
+  _instrumentModelNumber = other._instrumentModelNumber;
+  _instrumentExtendedSerialNumber = other._instrumentExtendedSerialNumber;
+  _instrumentCommonName = other._instrumentCommonName;
   for ( i = 0; i < 8; i++ ) {
     _externalDataDark[ i ] = other._externalDataDark[ i ];
   }
@@ -155,7 +166,11 @@ void svcsigcommonheader::display() const
   int i;
   std::cout << "Common Header:" << std::endl;
   std::cout << "\tName: " << _name << std::endl;
-  std::cout << "\tInstrument: " << _instrument << std::endl;
+  std::cout << "\tInstrument: " << _instrumentModelNumber << ": " << _instrumentExtendedSerialNumber;
+  if ( _instrumentCommonName.size() > 0 ) {
+    std::cout << " (" << _instrumentCommonName << ")";
+  }
+  std::cout << std::endl;
   std::cout << "\tExternal Dark Data:";
   for ( i = 0; i < 8; i++ ) {
     std::cout << " " << _externalDataDark[ i ];
@@ -187,7 +202,26 @@ std::string svcsigcommonheader::name() const
 
 std::string svcsigcommonheader::instrument() const
 {
-  return _instrument;
+  std::string tmp( _instrumentModelNumber + ": " + _instrumentExtendedSerialNumber );
+  if ( _instrumentCommonName.size() > 0 ) {
+    tmp += ( " (" + _instrumentCommonName + ")" );
+  }
+  return tmp;
+}
+
+std::string svcsigcommonheader::instrumentModelNumber() const
+{
+  return _instrumentModelNumber;
+}
+
+std::string svcsigcommonheader::instrumentExtendedSerialNumber() const
+{
+  return _instrumentExtendedSerialNumber;
+}
+
+std::string svcsigcommonheader::instrumentCommonName() const
+{
+  return _instrumentCommonName;
 }
 
 short * svcsigcommonheader::externalDataDark() const
@@ -259,17 +293,17 @@ float * svcsigcommonheader::factors() const
   return tmp;
 }
 
-float svcsigcommonheader::factorsSi() const
+float svcsigcommonheader::factorsReference() const
 {
   return _factors[ 0 ];
 }
 
-float svcsigcommonheader::factorsInGaAs1() const
+float svcsigcommonheader::factorsTarget() const
 {
   return _factors[ 1 ];
 }
 
-float svcsigcommonheader::factorsInGaAs2() const
+float svcsigcommonheader::factorsReflectance() const
 {
   return _factors[ 2 ];
 }
@@ -287,9 +321,21 @@ svcsigcommonheader& svcsigcommonheader::updateName( const std::string &name )
   return *this;
 }
 
-svcsigcommonheader& svcsigcommonheader::updateInstrument( const std::string &instrument )
+svcsigcommonheader& svcsigcommonheader::updateInstrumentModelNumber( const std::string &instrumentModelNumber )
 {
-  _instrument = instrument;
+  _instrumentModelNumber = instrumentModelNumber;
+  return *this;
+}
+
+svcsigcommonheader& svcsigcommonheader::updateInstrumentExtendedSerialNumber( const std::string &instrumentExtendedSerialNumber )
+{
+  _instrumentExtendedSerialNumber = instrumentExtendedSerialNumber;
+  return *this;
+}
+
+svcsigcommonheader& svcsigcommonheader::updateInstrumentCommonName( const std::string &instrumentCommonName )
+{
+  _instrumentCommonName = instrumentCommonName;
   return *this;
 }
 
@@ -369,21 +415,21 @@ svcsigcommonheader& svcsigcommonheader::updateFactors( float factors[ 3 ] )
   return *this;
 }
 
-svcsigcommonheader& svcsigcommonheader::updateFactorsSi( const float &factorsSi )
+svcsigcommonheader& svcsigcommonheader::updateFactorsReference( const float &factorsReference )
 {
-  _factors[ 0 ] = factorsSi;
+  _factors[ 0 ] = factorsReference;
   return *this;
 }
 
-svcsigcommonheader& svcsigcommonheader::updateFactorsInGaAs1( const float &factorsInGaAs1 )
+svcsigcommonheader& svcsigcommonheader::updateFactorsTarget( const float &factorsTarget )
 {
-  _factors[ 1 ] = factorsInGaAs1;
+  _factors[ 1 ] = factorsTarget;
   return *this;
 }
 
-svcsigcommonheader& svcsigcommonheader::updateFactorsInGaAs2( const float &factorsInGaAs2 )
+svcsigcommonheader& svcsigcommonheader::updateFactorsReflectance( const float &factorsReflectance )
 {
-  _factors[ 2 ] = factorsInGaAs2;
+  _factors[ 2 ] = factorsReflectance;
   return *this;
 }
 

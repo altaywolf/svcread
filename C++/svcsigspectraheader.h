@@ -64,7 +64,7 @@ private:
   std::string _time;
   std::string _longitude;
   std::string _latitude;
-  float _gpstime;
+  std::string _gpstime;
   unsigned int _memorySlot;
 protected:
   svcsigspectraheader& updateIntegration( float integration[ 3 ] );
@@ -107,7 +107,7 @@ protected:
   svcsigspectraheader& updateTime( const std::string &time );
   svcsigspectraheader& updateLongitude( const std::string &longitude );
   svcsigspectraheader& updateLatitude( const std::string &latitude );
-  svcsigspectraheader& updateGpsTime( const float &gpstime );
+  svcsigspectraheader& updateGpsTime( const std::string &gpstime );
   svcsigspectraheader& updateMemorySlot( const unsigned int &memorySlot );
   
   void display( const std::string &type ) const;
@@ -196,11 +196,13 @@ public:
   float decimalLongitude() const;
   std::string latitude() const;
   float decimalLatitude() const;
-  float gpstime() const;
+  std::string gpstime() const;
+  float decimalGpstime() const;
   unsigned int memorySlot() const;
   
-  void svcSigParseLatLon( const std::string &latlon, float &deg, float &minutes, float &seconds ) const;
-  void svcSigParseLatLon( const std::string &latlon, float &deg ) const;
+  void svcSigParseLatLon( const std::string &latlon, float &deg, float &minutes ) const;
+  float svcSigParseLatLon( const std::string &latlon ) const;
+  float svcSigParseGpsTime( const std::string &gpstime ) const;
   
   friend class svcsig;
 };
@@ -230,7 +232,7 @@ svcsigspectraheader::svcsigspectraheader()
   _time = "";
   _longitude = "";
   _latitude = "";
-  _gpstime = 0;
+  _gpstime = "";
   _memorySlot = 0;
 }
 
@@ -551,18 +553,11 @@ std::string svcsigspectraheader::longitude() const
 
 float svcsigspectraheader::decimalLongitude() const
 {
-  float sign( 0.0 );
-  float num( 0.0 );
-  
-  if ( _longitude.substr( _longitude.size() - 1, 1 ).compare( "E" ) ) {
-    sign = 1.0;
+  try {
+    return svcSigParseLatLon( _longitude );
+  } catch ( invalidSVCsigLatLonQuad &e ) {
+    throw; 
   }
-  else if ( _longitude.substr( _longitude.size() - 1, 1 ).compare( "W" ) ) {
-    sign = -1.0;
-  }
-  
-  svcSigParseLatLon( _longitude.substr( 0, _longitude.size() - 1 ), num );
-  return sign * num;
 }
 
 std::string svcsigspectraheader::latitude() const
@@ -572,23 +567,21 @@ std::string svcsigspectraheader::latitude() const
 
 float svcsigspectraheader::decimalLatitude() const
 {
-  float sign( 0.0 );
-  float num( 0.0 );
-  
-  if ( _latitude.substr( _latitude.size() - 1, 1 ).compare( "N" ) ) {
-    sign = 1.0;
+  try {
+    return svcSigParseLatLon( _latitude );
+  } catch ( invalidSVCsigLatLonQuad &e ) {
+    throw;
   }
-  else if ( _latitude.substr( _latitude.size() - 1, 1 ).compare( "S" ) ) {
-    sign = -1.0;
-  }
-  
-  svcSigParseLatLon( _latitude.substr( 0, _latitude.size() - 1 ), num );
-  return sign * num;
 }
 
-float svcsigspectraheader::gpstime() const
+std::string svcsigspectraheader::gpstime() const
 {
   return _gpstime;
+}
+
+float svcsigspectraheader::decimalGpstime() const
+{
+  return svcSigParseGpsTime( _gpstime );
 }
 
 unsigned int svcsigspectraheader::memorySlot() const
@@ -847,7 +840,7 @@ svcsigspectraheader& svcsigspectraheader::updateLatitude( const std::string &lat
   return *this;
 }
 
-svcsigspectraheader& svcsigspectraheader::updateGpsTime( const float &gpstime )
+svcsigspectraheader& svcsigspectraheader::updateGpsTime( const std::string &gpstime )
 {
   _gpstime = gpstime;
   return *this;
@@ -860,21 +853,52 @@ svcsigspectraheader& svcsigspectraheader::updateMemorySlot( const unsigned int &
 }
 
 // -- -- Helper Functions -- -- //
-void svcsigspectraheader::svcSigParseLatLon( const std::string &latlon, float &deg, float &minutes, float &seconds ) const
+void svcsigspectraheader::svcSigParseLatLon( const std::string &latlon, float &deg, float &minutes ) const
 {
-  std::size_t loc( latlon.find( "." ) );
-  deg = atof( latlon.substr( 0, loc - 2 ).c_str() );
-  minutes = atof( latlon.substr( loc - 2, 2 ).c_str() );
-  seconds = atof( latlon.substr( loc + 1, latlon.size() - loc - 1).c_str() );
+  try {
+    std::size_t loc( latlon.find( "." ) );
+    deg = atof( latlon.substr( 0, loc - 2 ).c_str() );
+    if ( latlon.substr( latlon.size() - 1, 1 ).compare( "E" ) || latlon.substr( latlon.size() - 1, 1 ).compare( "N" ) ) {
+      // nothing to do, deg is positive
+    }
+    else if ( latlon.substr( latlon.size() - 1, 1 ).compare( "W" ) || latlon.substr( latlon.size() - 1, 1 ).compare( "S" ) ) {
+      deg *= -1.0;
+    }
+    else {
+      throw invalidSVCsigLatLonQuad( ( latlon.substr( latlon.size() - 1, 1 ) ) );
+    }
+    minutes = atof( latlon.substr( loc - 2, latlon.size() - loc + 2 ).c_str() );
+  } catch ( invalidSVCsigLatLonQuad &e ) {
+    throw;
+  }
 }
 
-void svcsigspectraheader::svcSigParseLatLon( const std::string &latlon, float &deg ) const
+float svcsigspectraheader::svcSigParseLatLon( const std::string &latlon ) const
 {
-  float minutes, seconds;
-  svcSigParseLatLon( latlon, deg, minutes, seconds );
+  try {
+    float deg, minutes;
+    svcSigParseLatLon( latlon, deg, minutes );
+    if ( deg >= 0.0 ) {
+      deg += ( minutes / 60.0 );
+    }
+    else {
+      // I need to check that this logic is correct!
+      deg -= ( minutes / 60.0 );
+    }
+    return deg;
+  } catch ( invalidSVCsigLatLonQuad &e ) {
+    throw;
+  }
+}
+
+float svcsigspectraheader::svcSigParseGpsTime( const std::string &gpstime ) const
+{
+  float hour( atof( gpstime.substr( 0, 2 ).c_str() ) );
+  float minutes( atof( gpstime.substr( 2, 2 ).c_str() ) );
+  float seconds( atof( gpstime.substr( 4, 6 ).c_str() ) );
+  
   minutes += ( seconds / 60.0 );
-  deg += ( minutes / 60.0 );
+  hour += ( minutes / 60.0 );
+  
 }
-
-
 #endif // __svcsigspectraheader_h_

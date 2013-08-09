@@ -61,5 +61,15 @@ public:
   {}
 };
 
+class invalidSVCsigLatLonQuad : public std::runtime_error {
+public:
+  invalidSVCsigLatLonQuad()
+  : std::runtime_error( "Invalid SVC sig lat/lon quadrant" )
+  {}
+  invalidSVCsigLatLonQuad( const std::string &message )
+  : std::runtime_error( "'" + message + " is an invalid SVC sig lat/lon quadrant" )
+  {}
+};
+
 
 #endif // __svcsighelper_h_
