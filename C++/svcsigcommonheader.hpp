@@ -15,7 +15,7 @@
  *   https://github.com/pavdpr/svcread.git
  *
  * LICENSE:
- *   The MIT License (MIT) Copyright (c) 2013 Paul Romanczyk
+ *   The MIT License (MIT) Copyright (c) 2013 Rochester Institute of Technology
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a
  *   copy of this software and associated documentation files (the "Software"),
@@ -37,13 +37,13 @@
  *
  ******************************************************************************/
 
-#ifndef __svcsigcommonheader_h_
-#define __svcsigcommonheader_h_
+#ifndef __svcsigcommonheader_hpp_
+#define __svcsigcommonheader_hpp_
 
 #include <string>
 #include <stdexcept>
 
-#include "svcsighelper.h"
+#include "svcsighelper.hpp"
 
 
 class svcsigcommonheader {

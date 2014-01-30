@@ -37,13 +37,13 @@
  *
  ******************************************************************************/
 
-#ifndef __svcsigspectraheader_h_
-#define __svcsigspectraheader_h_
+#ifndef __svcsigspectraheader_hpp_
+#define __svcsigspectraheader_hpp_
 
 #include <string>
 #include <stdexcept>
 
-#include "svcsighelper.h"
+#include "svcsighelper.hpp"
 
 class svcsig;
 

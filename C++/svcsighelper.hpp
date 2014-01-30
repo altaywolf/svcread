@@ -7,6 +7,7 @@
  *
  * HISTORY:
  *    2013-08-04: Written by Paul Romanczyk (RIT)
+ *    2014-01-28: Updated documentation
  *
  * REFERENCES:
  *   "SVC HR-1024i / SVC HR-768i User Manual" v1.6
@@ -16,7 +17,8 @@
  *   https://github.com/pavdpr/svcread.git
  *
  * LICENSE:
- *   The MIT License (MIT) Copyright (c) 2013 Paul Romanczyk
+ *   The MIT License (MIT) Copyright (c) 2013-2014 Rochester Institute of 
+ *   Technology
  *
  *   Permission is hereby granted, free of charge, to any person obtaining a
  *   copy of this software and associated documentation files (the "Software"),
@@ -48,6 +50,9 @@ class notSvcSigFile : public std::runtime_error {
 public:
   notSvcSigFile()
   : std::runtime_error( "This file is not an SVC sig file" )
+  {}
+  notSvcSigFile( const std::string &message )
+  : std::runtime_error( "This file is not an SVC sig file\n" + message )
   {}
 };
 

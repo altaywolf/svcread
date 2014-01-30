@@ -1,5 +1,5 @@
 /*******************************************************************************
- * svcsig.h
+ * svcsig.hpp
  * 
  * DESCRIPTION:
  *    Contains the header (and implimentation) of the svcsig class
@@ -37,8 +37,8 @@
  *
  ******************************************************************************/
 
-#ifndef __svcsig_h_
-#define __svcsig_h_
+#ifndef __svcsig_hpp_
+#define __svcsig_hpp_
 
 #include <iostream>
 #include <iomanip>
@@ -47,9 +47,9 @@
 #include <string>
 #include <vector>
 
-#include "svcsighelper.h"
-#include "svcsigspectraheader.h"
-#include "svcsigcommonheader.h"
+#include "svcsighelper.hpp"
+#include "svcsigspectraheader.hpp"
+#include "svcsigcommonheader.hpp"
 
 
 class svcsig {
@@ -2026,6 +2026,9 @@ void svcsig::svcSigParseHeaderEquals( std::string &s, std::string &p ) const
     }
   } catch ( invalidSVCsigHeader &e ) {
     throw;
+  } catch ( std::exception &e ) {
+    std::cerr << e.what();
+    throw;
   }
 }
 
@@ -2111,7 +2114,9 @@ void svcsig::svcSigParseWhitespace( std::string &s, std::string &p ) const
       svcSigRemoveWhitespace( p );
     }
     else {
-      throw invalidSVCsigHeader( "in svcSigParseWhitespace");
+      std::string message( "in svcSigParseWhitespace.\n" );
+      message += "\tNo space in string '" + s + "'";
+      throw invalidSVCsigHeader( message );
     }
   } catch ( invalidSVCsigHeader &e ) {
     throw;
@@ -2131,6 +2136,7 @@ void svcsig::svcSigParseData( std::string &s, float &wl, float &refRad, float &t
     tarRef = atof( s.c_str() );
     s.clear();
   } catch ( invalidSVCsigHeader &e ) {
+    std::cerr << "In svcsig::svcSigParseData" << std::endl;
     throw;
   }
 }
@@ -2171,10 +2177,15 @@ svcsig& svcsig::read( const std::string &filename )
   std::ifstream input;
   input.open( filename.c_str() );
   
+  std::string l;
+  
   
   try {
-    // I need error checking & Exceptions here
+    if ( !input.is_open() ) {
+      throw notSvcSigFile( "File '" + filename + "' does not exist." );
+    }
     
+    // I need i/o error checking & Exceptions here
     std::string line;
     std::string part;
     int i;
@@ -2184,7 +2195,7 @@ svcsig& svcsig::read( const std::string &filename )
     getline( input, line );
     svcSigRemoveWhitespace( line );
     if ( line.compare( "/*** Spectra Vista SIG Data ***/" ) != 0 ) {
-      throw notSvcSigFile();
+      throw notSvcSigFile( "Header does not contain: /*** Spectra Vista SIG Data ***/");
     }
     
     bool readHeader( true );
@@ -2192,6 +2203,7 @@ svcsig& svcsig::read( const std::string &filename )
     while ( readHeader && input.good() ) {
       
       getline( input, line );
+      l = line;
       svcSigParseHeaderEquals( line, part );
       
       if ( part.compare( "data" ) == 0 ) {
@@ -2414,25 +2426,31 @@ svcsig& svcsig::read( const std::string &filename )
       }
     } // end read header
     
+    
+    
     // read the data
     float wl, refRad, tarRad, tarRef;
+    getline( input, line );
     while ( input.good() ) {
-      getline( input, line );
       svcSigParseData( line, wl, refRad, tarRad, tarRef );
       _wavelength.push_back( wl );
       _referenceRadiance.push_back( refRad );
       _targetRadiance.push_back( tarRad );
       _targetReflectance.push_back( tarRef );
+      getline( input, line );
     }
+    
     
   } catch ( notSvcSigFile &e ) {
     std::cerr << e.what() << std::endl;
     std::cerr << "Failed to complete read" << std::endl;
+    std::cerr << e.what() << std::endl;
     input.close();
     return *this;
   } catch ( invalidSVCsigHeader &e ) {
     std::cerr << e.what() << std::endl;
     std::cerr << "Failed to complete read" << std::endl;
+    std::cerr << e.what() << std::endl;
     input.close();
     return *this;
   }
