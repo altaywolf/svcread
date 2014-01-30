@@ -1,2 +1,6 @@
 # Mac Things
 .DS_Store
+
+# C++ Things
+C++/svcrename/svcrename
+*.o
