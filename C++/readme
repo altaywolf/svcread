@@ -1,5 +1,4 @@
 Using in your project:
   Add the line 
-    #include 
-  "svcsig.h" to your project where needed
+    #include "svcsig.hpp" 
   
