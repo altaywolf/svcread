@@ -1,4 +1,4 @@
-FUNCTION readsvcsig, filename
+FUNCTION READSVCSIG, filename
 ;+ READSVCSIG reads an SVC sig file
 ;
 ; INPUTS:
@@ -22,6 +22,8 @@ FUNCTION readsvcsig, filename
 ;   2013-08-04: Updated by Paul Romanczyk
 ;      + Added a commonHeader.factorsComment field
 ;      + Changed commonHeader.factors to be a float array
+;   2013-09-20: Updated by Paul Romanczyk
+;      + Changed copyright to RIT
 ;
 ; REFERENCES:
 ;   "SVC HR-1024i / SVC HR-768i User Manual" v1.6
@@ -31,7 +33,7 @@ FUNCTION readsvcsig, filename
 ;   https://github.com/pavdpr/svcread.git
 ;
 ; LICENSE:
-;   The MIT License (MIT) Copyright (c) 2013 Paul Romanczyk
+;   The MIT License (MIT) Copyright (c) 2013 Rochester Institute of Technology
 ;
 ;   Permission is hereby granted, free of charge, to any person obtaining a copy
 ;   of this software and associated documentation files (the "Software"), to 

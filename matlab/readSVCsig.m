@@ -12,10 +12,11 @@ function data = readSVCsig( filename )
 %       white reference spectrum
 %   data.targetHeader: The parts of the header corresponding to the target
 %       spectrum
-%   data.wavelength: The wavelength values for the spectra
-%   data.reference: The radiance spectrum of the white reference
-%   data.target: The radiance spectrum of the target
-%   data.reflectance: The reflectance spectrum of the target
+%   data.wavelength: The wavelength values for the spectra. 
+%   data.reference: The radiance spectrum of the white reference.
+%   data.target: The radiance spectrum of the target.
+%   data.reflectance: The reflectance spectrum of the target. The
+%       reflectance is percentage (0-100 range).
 %
 % HISTORY:
 %   2013-07-24: Written by Paul Romanczyk (RIT)
@@ -24,6 +25,8 @@ function data = readSVCsig( filename )
 %       header)
 %       + Added a commonHeader.factorsComment field
 %       + Changed commonHeader.factors to be a float array
+%   2013-09-20: Updated by Paul Romanczyk 
+%       + Changed copyright to RIT.
 %
 % REFERENCES:
 %   "SVC HR-1024i / SVC HR-768i User Manual" v1.6
@@ -33,25 +36,27 @@ function data = readSVCsig( filename )
 %   https://github.com/pavdpr/svcread.git
 %
 % LICENSE:
-%   The MIT License (MIT) Copyright (c) 2013 Paul Romanczyk
+%   The MIT License (MIT) Copyright (c) 2013 Rochester Institute of
+%   Technology
 %
-%   Permission is hereby granted, free of charge, to any person obtaining a copy
-%   of this software and associated documentation files (the "Software"), to 
-%   deal in the Software without restriction, including without limitation the 
-%   rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
-%   sell copies of the Software, and to permit persons to whom the Software is 
-%   furnished to do so, subject to the following conditions:
+%   Permission is hereby granted, free of charge, to any person obtaining a
+%   copy of this software and associated documentation files (the 
+%   "Software"), to deal in the Software without restriction, including 
+%   without limitation the rights to use, copy, modify, merge, publish, 
+%   distribute, sublicense, and/or sell copies of the Software, and to 
+%   permit persons to whom the Software is furnished to do so, subject to 
+%   the following conditions:
 %
-%   The above copyright notice and this permission notice shall be included in 
-%	all copies or substantial portions of the Software.
+%   The above copyright notice and this permission notice shall be included
+%	in all copies or substantial portions of the Software.
 %
-%   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-%   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-%   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-%   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-%   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-%   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-%   IN THE SOFTWARE.	
+%   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+%   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+%   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+%   IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY 
+%   CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+%   TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+%   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.	
 %
 %
 	
