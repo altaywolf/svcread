@@ -2,5 +2,5 @@
 .DS_Store
 
 # C++ Things
-C++/svcrename
-C++/*.o
+C++/svcrename/svcrename
+*.o
