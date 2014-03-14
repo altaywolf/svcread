@@ -1,11 +1,59 @@
 #!/usr/bin/python
 
-"""
-File readSVCsig.py
-
-Reads an SVC sig file
-
-"""
+# READSVCSIG reads an SVC sig file
+#
+# INPUTS:
+#   filename: the file (including path in needed)
+#
+# OUTPUTS:
+#   output: a dictionary containing the information in the sig file
+#   output[ 'commonHeader' ]: The parts of the header corresponding to the entire
+#       file
+#   output[ 'referenceHeader' ]: The parts of the header corresponding to the
+#       white reference spectrum
+#   output[ 'targetHeader' ]: The parts of the header corresponding to the target
+#       spectrum
+#   output[ 'wavelength' ]: The wavelength values for the spectra. 
+#   output[ 'reference' ]: The radiance spectrum of the white reference.
+#   output[ 'target' ]: The radiance spectrum of the target.
+#   output[ 'reflectance' ]: The reflectance spectrum of the target. The
+#       reflectance is percentage (0-100 range).
+#
+# HISTORY:
+#   2014-01-29: Initial version
+#   2014-03-14: Updated documentation
+#
+# REFERENCES:
+#   "SVC HR-1024i / SVC HR-768i User Manual" v1.6
+#   http://spectravista.com/
+#
+# PUBLIC REPOSITORY:
+#   https://github.com/pavdpr/svcread.git
+#
+# LICENSE:
+#   The MIT License (MIT) Copyright (c) 2013 Rochester Institute of
+#   Technology
+#
+#   Permission is hereby granted, free of charge, to any person obtaining a
+#   copy of this software and associated documentation files (the 
+#   "Software"), to deal in the Software without restriction, including 
+#   without limitation the rights to use, copy, modify, merge, publish, 
+#   distribute, sublicense, and/or sell copies of the Software, and to 
+#   permit persons to whom the Software is furnished to do so, subject to 
+#   the following conditions:
+#
+#   The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+#   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+#   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF 
+#   MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. 
+#   IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY 
+#   CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+#   TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+#   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  
+#
+#
 
 import sys
 
