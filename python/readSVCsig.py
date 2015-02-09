@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 """READSVCSIG reads an SVC sig file
 
@@ -21,6 +21,7 @@ OUTPUTS:
             reflectance is percentage (0-100 range).
 
 HISTORY:
+    2015-02-09: Switched the shebang to #!/usr/bin/env python
     2015-02-08: Updated code.
       -- Switched to numpy for holding data
       -- Updated logic
