@@ -21,6 +21,9 @@ OUTPUTS:
             reflectance is percentage (0-100 range).
 
 HISTORY:
+    2015-03-19: Updated Code.
+      -- Fixed a bug when the gpstime was not set.
+      -- Switched to regular expressions to parse data.
     2015-02-09: Switched the shebang to #!/usr/bin/env python
     2015-02-08: Updated code.
       -- Switched to numpy for holding data
@@ -69,6 +72,7 @@ __maintainer__ = "Paul Romanczyk"
 __email__ = "par4249@rit.edu"
 __status__ = "Production"
 
+import re
 import sys
 import numpy
 
@@ -113,6 +117,8 @@ def readSVCheader(filename):
         referenceHeader = {}
         targetHeader = {}
 
+        commaregex = re.compile(r'\s*,\s*')
+
         run = True
         while run:
             line = fid.readline()
@@ -131,7 +137,7 @@ def readSVCheader(filename):
                 elif key == 'instrument':
                     commonHeader[key] = value
                 elif key == 'integration':
-                    tmp = value.split(', ')
+                    tmp = commaregex.split(value)
                     tmp = map(float, tmp)
                     (referenceHeader[key], targetHeader[key]) = \
                         splitListInHalf(tmp)
@@ -139,24 +145,24 @@ def readSVCheader(filename):
                     (referenceHeader[key], targetHeader[key]) = \
                         splitListInHalf(value)
                 elif key == 'scan coadds':
-                    tmp = value.split(', ')
+                    tmp = commaregex.split(value)
                     tmp = map(float, tmp)
                     (referenceHeader[key], targetHeader[key]) = \
                         splitListInHalf(tmp)
                 elif key == 'scan time':
-                    tmp = value.split(', ')
+                    tmp = commaregex.split(value)
                     # can this be an int?
                     tmp = map(float, tmp)
                     (referenceHeader[key], targetHeader[key]) = \
                         splitListInHalf(tmp)
                 elif key == 'scan settings':
-                    tmp = value.split(', ')
+                    tmp = commaregex.split(value)
                     (referenceHeader[key], targetHeader[key]) = \
                         splitListInHalf(tmp)
                 elif key == 'external data set1':
                     # these seem to not have a space after the comma....
                     # I may want to switch to regualar expressions for this!
-                    tmp = value.split(',')
+                    tmp = commaregex.split(value)
                     # i need to check that this is an int
                     tmp = map(float, tmp)
                     (referenceHeader[key], targetHeader[key]) = \
@@ -164,7 +170,7 @@ def readSVCheader(filename):
                 elif key == 'external data set2':
                     # these seem to not have a space after the comma....
                     # I may want to switch to regualar expressions for this!
-                    tmp = value.split(',')
+                    tmp = commaregex.split(value)
                     # i need to check that this is an int
                     tmp = map(float, tmp)
                     (referenceHeader[key], targetHeader[key]) = \
@@ -172,7 +178,7 @@ def readSVCheader(filename):
                 elif key == 'external data dark':
                     # these seem to not have a space after the comma....
                     # I may want to switch to regualar expressions for this!
-                    tmp = value.split(',')
+                    tmp = commaregex.split(value)
                     # i need to check that this is an int
                     tmp = map(float, tmp)
                     (referenceHeader[key], targetHeader[key]) = \
@@ -183,18 +189,18 @@ def readSVCheader(filename):
                     (referenceHeader[key], targetHeader[key]) = \
                         splitListInHalf(value)
                 elif key == 'temp':
-                    tmp = value.split(', ')
+                    tmp = commaregex.split(value)
                     # i need to check that this is an int
                     tmp = map(float, tmp)
                     (referenceHeader[key], targetHeader[key]) = \
                         splitListInHalf(tmp)
                 elif key == 'battery':
-                    tmp = value.split(', ')
+                    tmp = commaregex.split(value)
                     tmp = map(float, tmp)
                     (referenceHeader[key], targetHeader[key]) = \
                         splitListInHalf(tmp)
                 elif key == 'error':
-                    tmp = value.split(', ')
+                    tmp = commaregex.split(value)
                     tmp = map(int, tmp)
                     (referenceHeader[key], targetHeader[key]) = \
                         splitListInHalf(tmp)
@@ -211,14 +217,22 @@ def readSVCheader(filename):
                     (referenceHeader[key], targetHeader[key]) = \
                         splitListInHalf(value)
                 elif key == 'gpstime':
-                    tmp = value.split(', ')
-                    tmp = map(float, tmp)
-                    (referenceHeader[key], targetHeader[key]) = \
-                        splitListInHalf(tmp)
+                    tmp = commaregex.split(value)
+                    # check to see if the value was set.
+                    if not tmp:
+                        referenceHeader[key] = None
+                        targetHeader[key] = None
+                    elif tmp[0] and tmp[1]:
+                        tmp = map(float, tmp)
+                        (referenceHeader[key], targetHeader[key]) = \
+                            splitListInHalf(tmp)
+                    else:
+                        referenceHeader[key] = None
+                        targetHeader[key] = None
                 elif key == 'comm':
                     commonHeader[key] = value
                 elif key == 'memory slot':
-                    tmp = value.split(', ')
+                    tmp = commaregex.split(value)
                     tmp = map(int, tmp)
                     (referenceHeader[key], targetHeader[key]) = \
                         splitListInHalf(tmp)
@@ -227,7 +241,7 @@ def readSVCheader(filename):
                     if idx > 0:
                         tmp = value[:idx]
                         tmp = tmp.strip()
-                        tmp = tmp.split(', ')
+                        tmp = commaregex.split(tmp)
                         commonHeader[key] = map(float, tmp)
                         tmp = value[idx+1:]
                         idx = tmp.find(']')
@@ -236,7 +250,7 @@ def readSVCheader(filename):
                         commonHeader['factors comment'] = tmp
                     else:
                         # no comments
-                        tmp = value.split(', ')
+                        tmp = commaregex.split(value)
                         commonHeader[key] = map(float, tmp)
                 else:
                     # we are an unknown key, but we can add it since I can index
